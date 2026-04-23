@@ -14,10 +14,13 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 class Base(DeclarativeBase):
+    """Base class used by all SQLAlchemy ORM models."""
+
     pass
 
 
 def get_db() -> Generator:
+    """Yield a request-scoped SQLAlchemy session and close it afterwards."""
     db = SessionLocal()
     try:
         yield db

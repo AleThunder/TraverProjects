@@ -8,6 +8,8 @@ from app.database import Base
 
 
 class TravelProject(Base):
+    """Database model for a traveller's planning project."""
+
     __tablename__ = "travel_projects"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -31,6 +33,8 @@ class TravelProject(Base):
 
 
 class ProjectPlace(Base):
+    """Database model for a validated external artwork stored in a project."""
+
     __tablename__ = "project_places"
     __table_args__ = (
         UniqueConstraint("project_id", "external_id", name="uq_project_external_place"),

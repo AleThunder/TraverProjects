@@ -32,6 +32,21 @@ The API will be available at:
 
 SQLite data is stored in `travel_planner.db`, created automatically on startup.
 
+## Project Structure
+
+```text
+app/
+  api/routes/      FastAPI route handlers and HTTP response metadata
+  core/            Shared application exceptions
+  repositories/    SQLAlchemy query helpers
+  services/        Business rules and third-party API integration
+  database.py      SQLite engine, session dependency, ORM base
+  models.py        SQLAlchemy database models
+  schemas.py       Pydantic request and response schemas
+```
+
+Routes stay thin and delegate validation/business decisions to services. Services raise application exceptions, and `app.main` maps those exceptions to consistent JSON HTTP responses.
+
 ## Example Requests
 
 Create a project with places:

@@ -8,15 +8,21 @@ ARTIC_FIELDS = "id,title,image_id,artist_display,date_display"
 
 
 class ArticAPIError(Exception):
+    """Raised when the Art Institute API cannot complete a request."""
+
     pass
 
 
 class ArtworkNotFoundError(Exception):
+    """Raised when the Art Institute API has no artwork for the requested ID."""
+
     pass
 
 
 @dataclass(frozen=True)
 class Artwork:
+    """Normalized artwork data used by the rest of the application."""
+
     external_id: int
     title: str
     image_id: str | None
@@ -25,6 +31,7 @@ class Artwork:
 
 
 async def fetch_artwork(external_id: int) -> Artwork:
+    """Fetch and normalize one artwork from the Art Institute of Chicago API."""
     url = f"{ARTIC_BASE_URL}/artworks/{external_id}"
     params = {"fields": ARTIC_FIELDS}
 

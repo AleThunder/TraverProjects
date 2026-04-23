@@ -4,9 +4,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-import app.main as main_module
 from app.database import Base, get_db
 from app.main import app
+from app.services import projects as project_service
+from app.services.artic import Artwork
 
 
 @pytest.fixture()
@@ -27,7 +28,7 @@ def client(monkeypatch):
             db.close()
 
     async def fake_artwork(external_id: int):
-        return main_module.Artwork(
+        return Artwork(
             external_id=external_id,
             title=f"Artwork {external_id}",
             image_id="image-id",
@@ -35,7 +36,7 @@ def client(monkeypatch):
             date_display="1884",
         )
 
-    monkeypatch.setattr(main_module, "get_artwork_or_http_error", fake_artwork)
+    monkeypatch.setattr(project_service, "get_artwork", fake_artwork)
     app.dependency_overrides[get_db] = override_get_db
 
     with TestClient(app) as test_client:
