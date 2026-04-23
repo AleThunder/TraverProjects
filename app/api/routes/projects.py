@@ -3,13 +3,14 @@ from collections.abc import Sequence
 from fastapi import APIRouter, Depends, Query, Response, status
 from sqlalchemy.orm import Session
 
+from app.core.security import require_session_auth
 from app.database import get_db
 from app.models import TravelProject
 from app.schemas import ProjectCreate, ProjectDetail, ProjectRead, ProjectUpdate
 from app.services import projects as project_service
 
 
-router = APIRouter(prefix="/projects", tags=["projects"])
+router = APIRouter(prefix="/projects", tags=["projects"], dependencies=[Depends(require_session_auth)])
 
 
 @router.post("", response_model=ProjectDetail, status_code=status.HTTP_201_CREATED)

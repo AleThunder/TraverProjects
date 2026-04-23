@@ -1,6 +1,11 @@
+import re
 from datetime import date, datetime
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+from typing_extensions import Annotated
+
+
+EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
 class PlaceImport(BaseModel):
@@ -94,3 +99,40 @@ class ProjectDetail(ProjectRead):
     """Response schema for returning a project together with its places."""
 
     places: list[PlaceRead] = Field(default_factory=list)
+
+
+class UserCredentials(BaseModel):
+    """Request schema for user registration and authentication."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    email: str = Field(..., min_length=3, max_length=255)
+    password: Annotated[str, Field(min_length=8, max_length=128)] = Field(alias="pass")
+
+    @field_validator("email")
+    @classmethod
+    def validate_email(cls, email: str) -> str:
+        """Validate and normalize an email address without extra dependencies."""
+        normalized_email = email.strip().lower()
+        if not EMAIL_PATTERN.match(normalized_email):
+            raise ValueError("email must be a valid email address")
+        return normalized_email
+
+
+class UserRead(BaseModel):
+    """Response schema for returning public user data."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    email: str
+    created_at: datetime
+
+
+class AuthResponse(BaseModel):
+    """Response schema returned after successful user authentication."""
+
+    access_token: str
+    token_type: str = "bearer"
+    expires_at: datetime
+    user: UserRead

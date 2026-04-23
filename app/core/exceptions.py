@@ -31,6 +31,13 @@ class ConflictError(TravelPlannerError):
     detail = "Resource conflict"
 
 
+class UnauthorizedError(TravelPlannerError):
+    """Raised when authentication credentials are missing or invalid."""
+
+    status_code = 401
+    detail = "Authentication required"
+
+
 class ExternalServiceError(TravelPlannerError):
     """Raised when a required third-party API cannot complete the operation."""
 

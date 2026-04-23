@@ -3,13 +3,14 @@ from collections.abc import Sequence
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
+from app.core.security import require_session_auth
 from app.database import get_db
 from app.models import ProjectPlace
 from app.schemas import PlaceCreate, PlaceRead, PlaceUpdate
 from app.services import places as place_service
 
 
-router = APIRouter(prefix="/projects/{project_id}/places", tags=["places"])
+router = APIRouter(prefix="/projects/{project_id}/places", tags=["places"], dependencies=[Depends(require_session_auth)])
 
 
 @router.post("", response_model=PlaceRead, status_code=status.HTTP_201_CREATED)

@@ -1,11 +1,11 @@
 from collections.abc import Generator
-from os import getenv
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
+from app.core.config import settings
 
-DATABASE_URL = getenv("DATABASE_URL", "sqlite:///./travel_planner.db")
+
+DATABASE_URL = settings.database_url
 
 engine = create_engine(
     DATABASE_URL,

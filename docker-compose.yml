@@ -6,6 +6,8 @@ services:
     container_name: travel-planner-api
     environment:
       DATABASE_URL: sqlite:////data/travel_planner.db
+      ARTIC_CACHE_TTL_SECONDS: ${ARTIC_CACHE_TTL_SECONDS:-300}
+      SESSION_TTL_MINUTES: ${SESSION_TTL_MINUTES:-30}
     ports:
       - "8000:8000"
     volumes:

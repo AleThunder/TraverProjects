@@ -11,6 +11,9 @@ FastAPI CRUD application for managing travel projects and places. Places are val
 - Automatically mark a project as completed when all its places are visited.
 - Prevent deleting a project when any place has already been visited.
 - Prevent duplicate external places within the same project.
+- Pagination for project listing endpoints.
+- In-memory TTL caching for Art Institute API artwork lookups.
+- User registration and 30-minute session authentication for project and place endpoints.
 - Swagger/OpenAPI documentation at `/docs`.
 
 ## Setup
@@ -31,6 +34,18 @@ The API will be available at:
 - Health check: `http://127.0.0.1:8000/health`
 
 SQLite data is stored in `travel_planner.db`, created automatically on startup.
+
+## Configuration
+
+The app supports these environment variables:
+
+```text
+DATABASE_URL=sqlite:///./travel_planner.db
+ARTIC_CACHE_TTL_SECONDS=300
+SESSION_TTL_MINUTES=30
+```
+
+`/health`, `/user/register/`, and `/user/auth/` are public. Project and place endpoints require a valid session token. Passwords are hashed before they are stored.
 
 ## Docker
 
@@ -72,10 +87,29 @@ Routes stay thin and delegate validation/business decisions to services. Service
 
 ## Example Requests
 
+Register a user:
+
+```bash
+curl -X POST http://127.0.0.1:8000/user/register/ ^
+  -H "Content-Type: application/json" ^
+  -d "{\"email\":\"traveller@example.com\",\"pass\":\"secret123\"}"
+```
+
+Create a 30-minute session:
+
+```bash
+curl -X POST http://127.0.0.1:8000/user/auth/ ^
+  -H "Content-Type: application/json" ^
+  -d "{\"email\":\"traveller@example.com\",\"pass\":\"secret123\"}"
+```
+
+Use the returned `access_token` as a Bearer token for project and place endpoints.
+
 Create a project with places:
 
 ```bash
 curl -X POST http://127.0.0.1:8000/projects ^
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" ^
   -H "Content-Type: application/json" ^
   -d "{\"name\":\"Chicago museum trip\",\"description\":\"Artworks to see\",\"start_date\":\"2026-05-01\",\"places\":[{\"external_id\":27992,\"notes\":\"Must see\"}]}"
 ```
@@ -84,6 +118,7 @@ Add a place to an existing project:
 
 ```bash
 curl -X POST http://127.0.0.1:8000/projects/1/places ^
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" ^
   -H "Content-Type: application/json" ^
   -d "{\"external_id\":28560,\"notes\":\"Check gallery info\"}"
 ```
@@ -92,6 +127,7 @@ Update notes and mark a place as visited:
 
 ```bash
 curl -X PATCH http://127.0.0.1:8000/projects/1/places/1 ^
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" ^
   -H "Content-Type: application/json" ^
   -d "{\"notes\":\"Visited on day one\",\"visited\":true}"
 ```
@@ -99,7 +135,7 @@ curl -X PATCH http://127.0.0.1:8000/projects/1/places/1 ^
 List projects:
 
 ```bash
-curl "http://127.0.0.1:8000/projects?skip=0&limit=20"
+curl -H "Authorization: Bearer YOUR_ACCESS_TOKEN" "http://127.0.0.1:8000/projects?skip=0&limit=20"
 ```
 
 ## API Summary
@@ -118,6 +154,11 @@ curl "http://127.0.0.1:8000/projects?skip=0&limit=20"
 - `GET /projects/{project_id}/places`
 - `GET /projects/{project_id}/places/{place_id}`
 - `PATCH /projects/{project_id}/places/{place_id}`
+
+### Users
+
+- `POST /user/register/`
+- `POST /user/auth/`
 
 ## Business Rules
 
