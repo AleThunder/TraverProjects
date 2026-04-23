@@ -32,6 +32,29 @@ The API will be available at:
 
 SQLite data is stored in `travel_planner.db`, created automatically on startup.
 
+## Docker
+
+Build and run with Docker:
+
+```bash
+docker build -t travel-planner-api .
+docker run --rm -p 8000:8000 -v travel_planner_data:/data -e DATABASE_URL=sqlite:////data/travel_planner.db travel-planner-api
+```
+
+Or use Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+The container exposes the same URLs:
+
+- API: `http://127.0.0.1:8000`
+- Swagger docs: `http://127.0.0.1:8000/docs`
+- Health check: `http://127.0.0.1:8000/health`
+
+Docker Compose stores SQLite data in the named volume `travel_planner_data`.
+
 ## Project Structure
 
 ```text

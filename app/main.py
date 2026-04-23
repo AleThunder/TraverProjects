@@ -18,23 +18,23 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 def create_app() -> FastAPI:
     """Build and configure the FastAPI application instance."""
-    app = FastAPI(
+    fast_app = FastAPI(
         title="Travel Planner API",
         description="CRUD API for travel projects and project places backed by the Art Institute of Chicago API.",
         version="0.1.0",
         lifespan=lifespan,
     )
 
-    app.include_router(health.router)
-    app.include_router(projects.router)
-    app.include_router(places.router)
+    fast_app.include_router(health.router)
+    fast_app.include_router(projects.router)
+    fast_app.include_router(places.router)
 
-    @app.exception_handler(TravelPlannerError)
+    @fast_app.exception_handler(TravelPlannerError)
     async def handle_travel_planner_error(request: Request, exc: TravelPlannerError) -> JSONResponse:
         """Convert expected domain errors into consistent JSON API responses."""
         return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
 
-    return app
+    return fast_app
 
 
 app = create_app()

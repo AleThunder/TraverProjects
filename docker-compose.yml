@@ -1,0 +1,16 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: travel-planner-api
+    environment:
+      DATABASE_URL: sqlite:////data/travel_planner.db
+    ports:
+      - "8000:8000"
+    volumes:
+      - travel_planner_data:/data
+    restart: unless-stopped
+
+volumes:
+  travel_planner_data:
