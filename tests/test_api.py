@@ -73,6 +73,22 @@ def test_register_and_authenticate_user(client):
     assert auth_response.cookies.get("session_token")
 
 
+def test_user_routes_work_without_redirects(client):
+    register_response = client.post(
+        "/user/register",
+        json={"email": "no-redirect@example.com", "pass": USER_PASSWORD},
+        follow_redirects=False,
+    )
+    auth_response = client.post(
+        "/user/auth",
+        json={"email": "no-redirect@example.com", "pass": USER_PASSWORD},
+        follow_redirects=False,
+    )
+
+    assert register_response.status_code == 201
+    assert auth_response.status_code == 200
+
+
 def test_reject_duplicate_user_registration(client):
     client.post("/user/register/", json={"email": USER_EMAIL, "pass": USER_PASSWORD})
     response = client.post("/user/register/", json={"email": USER_EMAIL, "pass": USER_PASSWORD})

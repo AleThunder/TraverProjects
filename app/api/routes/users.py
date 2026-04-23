@@ -11,13 +11,15 @@ from app.services import users as user_service
 router = APIRouter(prefix="/user", tags=["users"])
 
 
-@router.post("/register/", response_model=UserRead, status_code=status.HTTP_201_CREATED)
+@router.post("/register", response_model=UserRead, status_code=status.HTTP_201_CREATED)
+@router.post("/register/", response_model=UserRead, status_code=status.HTTP_201_CREATED, include_in_schema=False)
 def register_user(payload: UserCredentials, db: Session = Depends(get_db)) -> User:
     """Register a new user account with a securely hashed password."""
     return user_service.register_user(db, payload)
 
 
-@router.post("/auth/", response_model=AuthResponse)
+@router.post("/auth", response_model=AuthResponse)
+@router.post("/auth/", response_model=AuthResponse, include_in_schema=False)
 def authenticate_user(payload: UserCredentials, response: Response, db: Session = Depends(get_db)) -> AuthResponse:
     """Authenticate a user and create a session that expires in 30 minutes by default."""
     user, token, expires_at = user_service.authenticate_user(db, payload)

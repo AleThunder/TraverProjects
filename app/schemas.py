@@ -1,8 +1,7 @@
 import re
 from datetime import date, datetime
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
-from typing_extensions import Annotated
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
@@ -104,10 +103,26 @@ class ProjectDetail(ProjectRead):
 class UserCredentials(BaseModel):
     """Request schema for user registration and authentication."""
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "email": "traveller@example.com",
+                "pass": "secret123",
+            }
+        }
+    )
 
     email: str = Field(..., min_length=3, max_length=255)
-    password: Annotated[str, Field(min_length=8, max_length=128)] = Field(alias="pass")
+    password: str = Field(..., min_length=8, max_length=128)
+
+    @model_validator(mode="before")
+    @classmethod
+    def map_password_input(cls, values: object) -> object:
+        """Accept pass or password in JSON without using a Pydantic field alias."""
+        if isinstance(values, dict):
+            if "pass" in values and "password" not in values:
+                return {**values, "password": values["pass"]}
+        return values
 
     @field_validator("email")
     @classmethod
