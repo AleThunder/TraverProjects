@@ -70,6 +70,11 @@ The container exposes the same URLs:
 
 Docker Compose stores SQLite data in the named volume `travel_planner_data`.
 
+## API Documentation
+
+- Swagger/OpenAPI: `http://127.0.0.1:8000/docs`
+- Postman collection: `Travel_Projects.postman_collection.json`
+
 ## Project Structure
 
 ```text
