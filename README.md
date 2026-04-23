@@ -73,7 +73,8 @@ Docker Compose stores SQLite data in the named volume `travel_planner_data`.
 ## API Documentation
 
 - Swagger/OpenAPI: `http://127.0.0.1:8000/docs`
-- Postman collection: `Travel_Projects.postman_collection.json` or `https://beautymafiadev.postman.co/workspace/My-Workspace~c05af33c-e5df-45fe-8fed-93c86adffc58/collection/34553835-65d22337-386d-4c0a-a26f-b7141202c104?action=share&creator=34553835`
+- Postman collection: `Travel_Projects.postman_collection.json`
+- Postman collection by url `https://beautymafiadev.postman.co/workspace/My-Workspace~c05af33c-e5df-45fe-8fed-93c86adffc58/collection/34553835-65d22337-386d-4c0a-a26f-b7141202c104?action=share&creator=34553835`
 
 ## Project Structure
 
